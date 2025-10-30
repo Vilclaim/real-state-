@@ -50,43 +50,61 @@ nav a:hover {
   color: gold;
 }
 
-/* HERO SECTION */
+/* HERO SECTION WITH CLEAR VIDEO BACKGROUND */
 .hero {
+  position: relative;
   height: 100vh;
-  background: url('images/luxury-bg.jpg') center/cover no-repeat;
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
-  position: relative;
+  overflow: hidden;
 }
 
-.hero::after {
-  content: "";
+/* CLEARER VIDEO BACKGROUND */
+#bg-video {
   position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+
+  /* Remove dark filter and add light clarity */
+  filter: brightness(85%) contrast(110%) saturate(120%);
+  transition: filter 0.5s ease;
 }
 
+/* Optional hover clarity boost */
+.hero:hover #bg-video {
+  filter: brightness(95%) contrast(120%) saturate(130%);
+}
+
+/* CONTENT STYLING */
 .hero-content {
   position: relative;
   z-index: 2;
-  background: rgba(0, 0, 0, 0.55);
-  padding: 40px;
+  background: rgba(0, 0, 0, 0.35); /* lighter overlay for clearer background */
+  padding: 40px 60px;
   border-radius: 15px;
-  box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.25);
   animation: fadeIn 1.2s ease;
+  backdrop-filter: blur(3px);
 }
 
 .hero-content h1 {
   color: gold;
   font-size: 3rem;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  text-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
 }
 
 .hero-content p {
-  color: #ddd;
-  margin-bottom: 20px;
+  color: #f1f1f1;
+  font-size: 1.2rem;
+  margin-bottom: 25px;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .btn {
@@ -97,13 +115,15 @@ nav a:hover {
   border-radius: 10px;
   border: none;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s ease;
 }
 
 .btn:hover {
   background: #ffd966;
   transform: scale(1.05);
 }
+
+
 
 /* SECTIONS */
 .section {
@@ -686,4 +706,261 @@ footer {
   pointer-events: none;
   position: absolute;
   visibility: hidden;
+}
+
+
+/* FULLSCREEN SLIDER LIKE BAYUT */
+.fullscreen-slider {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.95);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+  animation: fadeIn 0.4s ease;
+}
+
+.slider-header {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+}
+
+.back-btn {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.back-btn:hover {
+  background: gold;
+  color: #000;
+}
+
+.slider-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 90%;
+  max-width: 900px;
+  position: relative;
+}
+
+.slide-photo {
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 10px;
+  border: 2px solid rgba(255,215,0,0.3);
+  box-shadow: 0 0 25px rgba(255,215,0,0.2);
+  transition: opacity 0.3s ease;
+}
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.1);
+  color: gold;
+  border: 2px solid gold;
+  font-size: 2rem;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arrow:hover {
+  background: gold;
+  color: #000;
+}
+
+.arrow.left { left: -70px; }
+.arrow.right { right: -70px; }
+
+@media (max-width: 768px) {
+  .arrow.left { left: 10px; }
+  .arrow.right { right: 10px; }
+}
+
+/* ABOUT SECTION */
+.about-container {
+  max-width: 1100px;
+  margin: 60px auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 50px;
+  padding: 40px 30px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 215, 0, 0.15);
+  border-radius: 20px;
+  box-shadow: 0 0 40px rgba(255, 215, 0, 0.08);
+  backdrop-filter: blur(10px);
+  animation: fadeIn 1.2s ease;
+}
+
+.about-text {
+  flex: 1;
+  color: #e8e8e8;
+  font-size: 1rem;
+  line-height: 1.8;
+  letter-spacing: 0.2px;
+  text-align: justify;
+}
+
+.about-text h3 {
+  color: gold;
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  font-weight: 600;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+}
+
+.about-text p {
+  margin-bottom: 18px;
+  color: #ddd;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+  transition: color 0.3s ease;
+}
+
+.about-text p:hover {
+  color: #fff;
+}
+
+.owner-photo {
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  border: 3px solid gold;
+  object-fit: cover;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.35);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.owner-photo:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 45px rgba(255, 215, 0, 0.5);
+}
+
+.section.about {
+  background: linear-gradient(180deg, rgba(15,15,15,1) 0%, rgba(25,25,25,1) 100%);
+  padding: 100px 20px;
+}
+
+.section.about .section-title {
+  margin-bottom: 50px;
+  color: gold;
+  text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+  letter-spacing: 1px;
+}
+
+/* Mobile-friendly adjustments */
+@media (max-width: 900px) {
+  .about-container {
+    flex-direction: column;
+    text-align: center;
+    padding: 30px 20px;
+  }
+  .about-text {
+    text-align: left;
+    font-size: 0.95rem;
+  }
+  .owner-photo {
+    width: 220px;
+    height: 220px;
+  }
+}
+
+/* Read More / Read Less Styles */
+.extra-text {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.8s ease, opacity 0.6s ease;
+}
+
+.extra-text.show {
+  max-height: 1000px; /* enough space for full text */
+  opacity: 1;
+}
+
+.read-btn {
+  background: gold;
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 25px;
+  font-weight: 600;
+  margin-top: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.read-btn:hover {
+  background: #ffd966;
+  transform: scale(1.05);
+}
+
+
+
+
+/* 🌟 LARGE GOLDEN SOCIAL ICONS (easy to click) */
+.social-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 35px;               /* spacing between icons */
+  margin: 50px 0;
+}
+
+.social-icon {
+  width: 85px;             /* 👈 bigger circle size */
+  height: 85px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  border: 3px solid gold;
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.social-icon i {
+  font-size: 2.5rem;       /* 👈 bigger icon inside */
+  color: gold;
+  transition: all 0.3s ease;
+}
+
+.social-icon:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 35px rgba(255, 215, 0, 0.6);
+  background: rgba(255, 215, 0, 0.1);
+}
+
+.social-icon:hover i {
+  color: #fff;
+}
+
+/* Subtle pulsing glow for luxury look */
+@keyframes glowPulse {
+  0% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
+  50% { box-shadow: 0 0 35px rgba(255, 215, 0, 0.6); }
+  100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
+}
+.social-icon {
+  animation: glowPulse 3s infinite ease-in-out;
 }
