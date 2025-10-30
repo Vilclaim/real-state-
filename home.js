@@ -1,966 +1,361 @@
-/* IMPORT FONTS */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+/* -----------------------------
+   🟢 WHATSAPP BOOKING
+----------------------------- */
+const bookButtons = document.querySelectorAll(".book-btn");
+const whatsappNumber = "971504238543";
 
-/* GLOBAL STYLES */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
-}
+bookButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    const title = button.dataset.title;
+    const price = button.dataset.price;
+    const desc = button.dataset.desc;
 
-body {
-  background: radial-gradient(circle at top, #0b0b0b, #000);
-  color: #fff;
-  overflow-x: hidden;
-  line-height: 1.6;
-}
+    const confirmBooking = confirm(
+      `Do you want to send an inquiry about:\n\n🏠 ${title}\n💰 ${price}\n📋 ${desc}\n\nClick OK to continue to WhatsApp.`
+    );
 
-/* HEADER */
-.glass-header {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  background: rgba(15, 15, 15, 0.7);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 215, 0, 0.2);
-  padding: 15px 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 1000;
-}
+    if (confirmBooking) {
+      const message = `Hello! I'm interested in:\n🏠 *${title}*\n💰 Price: ${price}\n📋 Details: ${desc}\nCan you tell me more about it?`;
+      const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+      window.open(url, "_blank");
+    }
+  });
+});
 
-.logo {
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: gold;
-  letter-spacing: 1px;
-}
+/* -----------------------------
+   🟡 VIEW MODAL + DETAILS
+----------------------------- */
+const modal = document.getElementById("galleryModal");
+const gallery = document.getElementById("gallery");
+const modalTitle = document.getElementById("modalTitle");
+const modalDesc = document.getElementById("modalDesc");
+const modalAddress = document.getElementById("modalAddress");
+const modalSize = document.getElementById("modalSize");
+const modalMap = document.getElementById("modalMap");
+const extraDetails = document.getElementById("extraDetails");
+const closeBtn = document.querySelector(".close-btn");
 
-nav a {
-  color: #fff;
-  margin-left: 20px;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.3s;
-}
+document.querySelectorAll(".view-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const images = btn.dataset.images.split(",");
+    const video = btn.dataset.video;
+    const title = btn.dataset.title;
+    const desc = btn.dataset.desc;
+    const size = btn.dataset.size;
+    const address = btn.dataset.address;
+    const map = btn.dataset.map;
+    const detailsHTML = btn.dataset.details;
 
-nav a:hover {
-  color: gold;
-}
+    modalTitle.textContent = title;
+    modalDesc.textContent = desc;
+    modalSize.textContent = size;
+    modalAddress.textContent = address;
+    modalMap.href = map;
+    extraDetails.innerHTML = detailsHTML || "";
 
-/* HERO SECTION WITH CLEAR VIDEO BACKGROUND */
-.hero {
-  position: relative;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  overflow: hidden;
-}
+    gallery.innerHTML = "";
 
-/* CLEARER VIDEO BACKGROUND */
-#bg-video {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 0;
+    // Images
+    images.forEach(img => {
+      const imageEl = document.createElement("img");
+      imageEl.src = img.trim();
+      imageEl.classList.add("zoomable");
+      gallery.appendChild(imageEl);
+    });
 
-  /* Remove dark filter and add light clarity */
-  filter: brightness(85%) contrast(110%) saturate(120%);
-  transition: filter 0.5s ease;
-}
+    // Video
+    if (video) {
+      const videoEl = document.createElement("video");
+      videoEl.src = video;
+      videoEl.controls = true;
+      gallery.appendChild(videoEl);
+    }
 
-/* Optional hover clarity boost */
-.hero:hover #bg-video {
-  filter: brightness(95%) contrast(120%) saturate(130%);
-}
+    // Add Save/Share
+    addShareButtons(title, desc);
 
-/* CONTENT STYLING */
-.hero-content {
-  position: relative;
-  z-index: 2;
-  background: rgba(0, 0, 0, 0.35); /* lighter overlay for clearer background */
-  padding: 40px 60px;
-  border-radius: 15px;
-  box-shadow: 0 0 25px rgba(255, 215, 0, 0.25);
-  animation: fadeIn 1.2s ease;
-  backdrop-filter: blur(3px);
-}
+    modal.style.display = "flex";
+    document.body.style.overflow = "hidden";
+  });
+});
 
-.hero-content h1 {
-  color: gold;
-  font-size: 3rem;
-  margin-bottom: 15px;
-  text-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
-}
+closeBtn.addEventListener("click", closeModal);
+window.addEventListener("click", e => {
+  if (e.target === modal) closeModal();
+});
 
-.hero-content p {
-  color: #f1f1f1;
-  font-size: 1.2rem;
-  margin-bottom: 25px;
-  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-.btn {
-  background: gold;
-  color: #000;
-  font-weight: 600;
-  padding: 12px 30px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn:hover {
-  background: #ffd966;
-  transform: scale(1.05);
+function closeModal() {
+  modal.style.display = "none";
+  document.body.style.overflow = "auto";
 }
 
 
 
-/* SECTIONS */
-.section {
-  padding: 100px 20px;
-  text-align: center;
+/* -----------------------------
+   🖼 FULLSCREEN IMAGE SLIDER LIKE BAYUT
+----------------------------- */
+let currentIndex = 0;
+let currentImages = [];
+
+gallery.addEventListener("click", e => {
+  if (e.target.classList.contains("zoomable")) {
+    currentImages = Array.from(gallery.querySelectorAll(".zoomable")).map(img => img.src);
+    currentIndex = currentImages.indexOf(e.target.src);
+    openFullScreenSlider(currentIndex);
+  }
+});
+
+function openFullScreenSlider(index) {
+  const overlay = document.createElement("div");
+  overlay.className = "fullscreen-slider";
+  overlay.innerHTML = `
+    <div class="slider-header">
+      <button class="back-btn">⟨ Back to gallery</button>
+    </div>
+    <div class="slider-content">
+      <button class="arrow left">⟨</button>
+      <img src="${currentImages[index]}" class="slide-photo">
+      <button class="arrow right">⟩</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  document.body.style.overflow = "hidden";
+
+  // navigation
+  const img = overlay.querySelector(".slide-photo");
+  const left = overlay.querySelector(".arrow.left");
+  const right = overlay.querySelector(".arrow.right");
+  const back = overlay.querySelector(".back-btn");
+
+  const updateImage = () => { img.src = currentImages[currentIndex]; };
+
+  left.onclick = () => {
+    currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
+    updateImage();
+  };
+
+  right.onclick = () => {
+    currentIndex = (currentIndex + 1) % currentImages.length;
+    updateImage();
+  };
+
+  back.onclick = () => {
+    overlay.remove();
+    document.body.style.overflow = "auto";
+  };
+
+  overlay.addEventListener("click", e => {
+    if (e.target === overlay) {
+      overlay.remove();
+      document.body.style.overflow = "auto";
+    }
+  });
 }
 
-.section-title {
-  font-size: 2rem;
-  color: gold;
-  margin-bottom: 40px;
-  text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-}
 
-/* ABOUT SECTION */
-.about-container {
-  max-width: 1000px;
-  margin: auto;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 40px;
-}
 
-.owner-photo {
-  width: 260px;
-  height: 260px;
-  border-radius: 50%;
-  border: 3px solid gold;
-  box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
-  object-fit: cover;
-}
+/* -----------------------------
+   ❤️ SAVE / SHARE BUTTONS
+----------------------------- */
+function addShareButtons(title, desc) {
+  const oldBar = document.querySelector(".share-bar");
+  if (oldBar) oldBar.remove();
 
-.about-text {
-  max-width: 550px;
-  text-align: left;
-  color: #ccc;
-}
+  const bar = document.createElement("div");
+  bar.classList.add("share-bar");
+  bar.innerHTML = `
+    <button class="save-btn">💾 Save</button>
+    <button class="share-btn">🔗 Share</button>
+  `;
+  modal.querySelector(".modal-content").insertBefore(bar, modalDesc);
 
-.about-text h3 {
-  color: gold;
-  margin-bottom: 10px;
-  font-size: 1.5rem;
-}
+  const saveBtn = bar.querySelector(".save-btn");
+  const shareBtn = bar.querySelector(".share-btn");
 
-.whatsapp-btn {
-  display: inline-flex;
-  align-items: center;
-  background: #25d366;
-  color: #fff;
-  padding: 10px 20px;
-  border-radius: 10px;
-  text-decoration: none;
-  font-weight: 500;
-  margin-top: 15px;
-  transition: 0.3s;
-}
+  const saved = JSON.parse(localStorage.getItem("savedProperties")) || [];
+  const alreadySaved = saved.find(p => p.title === title);
 
-.whatsapp-btn:hover {
-  background: #1ebc5d;
-  transform: translateY(-2px);
-}
-
-.whatsapp-btn img {
-  width: 25px;
-  height: 25px;
-  margin-right: 10px;
-}
-
-/* PROPERTY SECTION */
-.property-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 30px;
-}
-
-.property-card {
-  width: 320px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 215, 0, 0.1);
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(255, 215, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.property-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
-}
-
-.property-card img {
-  width: 100%;
-  height: 210px;
-  object-fit: cover;
-}
-
-.card-content {
-  padding: 15px 20px 25px;
-}
-
-.price {
-  color: gold;
-  font-weight: bold;
-  margin: 8px 0;
-}
-
-.view-btn,
-.book-btn {
-  background: gold;
-  color: #000;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 16px;
-  margin: 5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.view-btn:hover,
-.book-btn:hover {
-  background: #ffd966;
-  transform: scale(1.05);
-}
-
-/* MAP SECTION */
-.map-container iframe {
-  border-radius: 12px;
-  margin-top: 25px;
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
-}
-
-/* FOOTER */
-footer {
-  background: rgba(0, 0, 0, 0.9);
-  color: #999;
-  text-align: center;
-  padding: 25px;
-  border-top: 1px solid rgba(255, 215, 0, 0.2);
-}
-
-/* MODAL STYLES */
-.modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.85);
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  animation: fadeIn 0.4s ease;
-}
-
-.modal-content {
-  background: rgba(18, 18, 18, 0.95);
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 215, 0, 0.2);
-  border-radius: 15px;
-  max-width: 1000px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-  padding: 30px;
-  position: relative;
-  color: #eee;
-  box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
-  animation: slideUp 0.5s ease;
-}
-
-.close-btn {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  font-size: 28px;
-  color: gold;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.close-btn:hover {
-  transform: rotate(90deg);
-  color: #ffd966;
-}
-
-.modal-desc {
-  color: #ccc;
-  margin-bottom: 10px;
-  font-style: italic;
-}
-
-.info-box {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 215, 0, 0.2);
-  border-radius: 10px;
-  padding: 15px;
-  margin-bottom: 20px;
-  text-align: left;
-  color: #ddd;
-}
-
-.info-box p {
-  margin: 5px 0;
-}
-
-.map-link {
-  color: gold;
-  text-decoration: underline;
-  transition: 0.3s;
-}
-
-.map-link:hover {
-  color: #ffd966;
-}
-
-/* GALLERY GRID */
-#gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
-  margin-top: 15px;
-}
-
-#gallery img,
-#gallery video {
-  width: 100%;
-  border-radius: 10px;
-  border: 2px solid rgba(255, 215, 0, 0.4);
-  transition: transform 0.3s;
-}
-
-#gallery img:hover {
-  transform: scale(1.05);
-}
-
-/* PROPERTY DETAILS INSIDE MODAL */
-#extraDetails {
-  margin-top: 20px;
-  text-align: left;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 215, 0, 0.2);
-  border-radius: 10px;
-  padding: 20px;
-}
-
-#extraDetails h4 {
-  color: gold;
-  margin-top: 15px;
-  border-bottom: 1px solid rgba(255, 215, 0, 0.2);
-  padding-bottom: 5px;
-}
-
-#extraDetails ul {
-  margin: 10px 0 10px 20px;
-}
-
-#extraDetails li {
-  color: #ccc;
-  margin: 5px 0;
-}
-
-.amenities li {
-  display: inline-block;
-  margin: 5px 15px 5px 0;
-  background: rgba(255, 215, 0, 0.1);
-  border-radius: 20px;
-  padding: 5px 12px;
-  color: gold;
-  font-size: 0.9rem;
-}
-
-.contact-note {
-  text-align: center;
-  color: gold;
-  font-weight: 600;
-  margin-top: 20px;
-}
-
-/* FLOATING WHATSAPP BUTTON */
-.float-whatsapp {
-  position: fixed;
-  bottom: 25px;
-  right: 25px;
-  background: #25d366;
-  width: 55px;
-  height: 55px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-  transition: transform 0.3s ease;
-}
-
-.float-whatsapp:hover {
-  transform: scale(1.1);
-}
-
-.float-whatsapp img {
-  width: 30px;
-  height: 30px;
-}
-
-/* ANIMATIONS */
-@keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity: 1;}
-}
-
-@keyframes slideUp {
-  from {transform: translateY(50px); opacity: 0;}
-  to {transform: translateY(0); opacity: 1;}
-}
-
-.animate-fade { animation: fadeIn 1s ease both; }
-.animate-slide { animation: slideUp 1.2s ease both; }
-
-/* RESPONSIVE DESIGN */
-@media (max-width: 768px) {
-  .about-container {
-    flex-direction: column;
+  if (alreadySaved) {
+    saveBtn.textContent = "💛 Saved";
+    saveBtn.style.background = "gold";
+    saveBtn.style.color = "#000";
   }
 
-  .hero-content h1 {
-    font-size: 2rem;
+  // SAVE
+  saveBtn.addEventListener("click", () => {
+    const property = {
+      title,
+      desc,
+      image: gallery.querySelector("img")?.src || "",
+    };
+    let savedList = JSON.parse(localStorage.getItem("savedProperties")) || [];
+
+    if (!savedList.find(p => p.title === property.title)) {
+      savedList.push(property);
+      localStorage.setItem("savedProperties", JSON.stringify(savedList));
+      alert("✅ Property saved to favorites!");
+      saveBtn.textContent = "💛 Saved";
+      saveBtn.style.background = "gold";
+      saveBtn.style.color = "#000";
+      updateSavedCounter();
+    } else {
+      alert("⚠️ Already saved.");
+    }
+  });
+
+  // SHARE
+  shareBtn.addEventListener("click", async () => {
+    const url = window.location.href;
+    try {
+      await navigator.share({
+        title: "Prairies Hills Real Estate",
+        text: `Check out this property: ${title}`,
+        url: url,
+      });
+    } catch {
+      navigator.clipboard.writeText(`${title} - ${url}`);
+      alert("🔗 Link copied to clipboard!");
+    }
+  });
+}
+
+/* -----------------------------
+   💖 FAVORITE SYSTEM
+----------------------------- */
+function updateSavedCounter() {
+  const savedList = JSON.parse(localStorage.getItem("savedProperties")) || [];
+  const counter = document.getElementById("saved-counter");
+  if (counter) counter.textContent = savedList.length;
+}
+
+// Floating heart icon
+const savedBtn = document.createElement("div");
+savedBtn.className = "saved-floating";
+savedBtn.innerHTML = `❤️ <span id="saved-counter">0</span>`;
+document.body.appendChild(savedBtn);
+updateSavedCounter();
+
+savedBtn.addEventListener("click", openSavedModal);
+
+function openSavedModal() {
+  const saved = JSON.parse(localStorage.getItem("savedProperties")) || [];
+  const savedModal = document.createElement("div");
+  savedModal.classList.add("modal");
+  savedModal.style.display = "flex";
+
+  const content = document.createElement("div");
+  content.classList.add("modal-content");
+  content.innerHTML = `
+    <span class="close-btn">&times;</span>
+    <h3>❤️ Saved Properties</h3>
+    <div class="saved-list">
+      ${
+        saved.length
+          ? saved
+              .map(
+                (p, i) => `
+              <div class="saved-item">
+                <img src="${p.image}" alt="${p.title}">
+                <div class="saved-info">
+                  <h4>${p.title}</h4>
+                  <p>${p.desc}</p>
+                  <button class="remove-btn" data-index="${i}">🗑 Remove</button>
+                </div>
+              </div>`
+              )
+              .join("")
+          : "<p>No saved properties yet.</p>"
+      }
+    </div>
+  `;
+
+  savedModal.appendChild(content);
+  document.body.appendChild(savedModal);
+  document.body.style.overflow = "hidden";
+
+  content.querySelector(".close-btn").addEventListener("click", () => {
+    savedModal.remove();
+    document.body.style.overflow = "auto";
+  });
+
+  savedModal.addEventListener("click", e => {
+    if (e.target === savedModal) {
+      savedModal.remove();
+      document.body.style.overflow = "auto";
+    }
+  });
+
+  // Remove buttons
+  const removeBtns = content.querySelectorAll(".remove-btn");
+  removeBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const index = btn.dataset.index;
+      removeSavedProperty(index);
+      savedModal.remove();
+      openSavedModal(); // refresh view
+    });
+  });
+}
+
+function removeSavedProperty(index) {
+  let saved = JSON.parse(localStorage.getItem("savedProperties")) || [];
+  saved.splice(index, 1);
+  localStorage.setItem("savedProperties", JSON.stringify(saved));
+  updateSavedCounter();
+}
+
+/* -----------------------------
+   🖼 IMAGE ZOOM
+----------------------------- */
+document.addEventListener("click", e => {
+  if (e.target.classList.contains("zoomable")) {
+    const zoomOverlay = document.createElement("div");
+    zoomOverlay.classList.add("image-zoom");
+    zoomOverlay.innerHTML = `<img src="${e.target.src}" alt="Zoomed Image">`;
+    document.body.appendChild(zoomOverlay);
+    zoomOverlay.addEventListener("click", () => zoomOverlay.remove());
   }
+});
 
-  .property-card {
-    width: 90%;
-  }
+/* -----------------------------
+   🏷 PROPERTY FILTER (Rent / Sale)
+----------------------------- */
+const filterButtons = document.querySelectorAll(".filter-btn");
+const propertyCards = document.querySelectorAll(".property-card");
 
-  .modal-content {
-    width: 95%;
-    padding: 20px;
-  }
+filterButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    const type = button.getAttribute("data-type");
 
-  .section-title {
-    font-size: 1.6rem;
-  }
-}
+    // Toggle active button
+    filterButtons.forEach(btn => btn.classList.remove("active"));
+    button.classList.add("active");
 
+    // Show / hide cards smoothly
+    propertyCards.forEach(card => {
+      if (type === "all" || card.dataset.type === type) {
+        card.classList.remove("hide");
+        setTimeout(() => { card.style.display = "block"; }, 100);
+      } else {
+        card.classList.add("hide");
+        setTimeout(() => { card.style.display = "none"; }, 400);
+      }
+    });
+  });
+});
 
-/* SHARE BAR */
-.share-bar {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-bottom: 15px;
-}
+// READ MORE / READ LESS FUNCTION
+document.addEventListener("DOMContentLoaded", function() {
+  const readMoreBtn = document.getElementById("readMoreBtn");
+  const extraText = document.querySelector(".extra-text");
 
-.share-bar button {
-  background: rgba(255,215,0,0.2);
-  color: gold;
-  border: 1px solid rgba(255,215,0,0.4);
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.3s;
-}
+  readMoreBtn.addEventListener("click", function() {
+    extraText.classList.toggle("show");
 
-.share-bar button:hover {
-  background: gold;
-  color: #000;
-}
-
-/* IMAGE ZOOM OVERLAY */
-.image-zoom {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.9);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10000;
-  animation: fadeIn 0.3s ease;
-}
-
-.image-zoom img {
-  max-width: 90%;
-  max-height: 90%;
-  border: 3px solid gold;
-  border-radius: 12px;
-  box-shadow: 0 0 25px rgba(255,215,0,0.4);
-  cursor: zoom-out;
-}
-
-/* FAVORITE BUTTON FLOAT */
-.saved-floating {
-  position: fixed;
-  bottom: 100px;
-  right: 25px;
-  background: rgba(255, 215, 0, 0.15);
-  border: 2px solid gold;
-  color: gold;
-  font-size: 1.3rem;
-  font-weight: bold;
-  padding: 10px 16px;
-  border-radius: 50px;
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-  z-index: 9999;
-}
-
-.saved-floating:hover {
-  transform: scale(1.1);
-  background: gold;
-  color: #000;
-}
-
-.saved-floating span {
-  background: red;
-  color: #fff;
-  padding: 2px 6px;
-  border-radius: 50%;
-  font-size: 0.8rem;
-  margin-left: 4px;
-}
-
-/* SAVED MODAL LIST */
-.saved-list {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  text-align: left;
-}
-
-.saved-item {
-  display: flex;
-  gap: 15px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 215, 0, 0.2);
-  border-radius: 10px;
-  padding: 10px;
-  align-items: center;
-}
-
-.saved-item img {
-  width: 90px;
-  height: 70px;
-  object-fit: cover;
-  border-radius: 6px;
-  border: 2px solid rgba(255, 215, 0, 0.3);
-}
-
-.saved-item h4 {
-  color: gold;
-  margin: 0;
-  font-size: 1rem;
-}
-
-/* REMOVE BUTTON */
-.remove-btn {
-  background: rgba(255, 50, 50, 0.2);
-  color: #ff6666;
-  border: 1px solid rgba(255, 50, 50, 0.4);
-  padding: 5px 10px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.3s;
-  margin-top: 8px;
-}
-
-.remove-btn:hover {
-  background: #ff4444;
-  color: #fff;
-}
-
-/* PROPERTY FILTER BUTTONS */
-.property-filter {
-  margin-bottom: 30px;
-}
-
-.filter-btn {
-  background: rgba(255,255,255,0.1);
-  color: gold;
-  border: 1px solid rgba(255,215,0,0.3);
-  border-radius: 8px;
-  padding: 8px 16px;
-  margin: 5px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: 0.3s;
-}
-
-.filter-btn:hover {
-  background: gold;
-  color: #000;
-}
-
-.filter-btn.active {
-  background: gold;
-  color: #000;
-}
-
-/* PROPERTY TAG LABELS */
-.tag {
-  display: inline-block;
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 8px;
-  margin-top: 5px;
-}
-
-.tag.rent {
-  background: rgba(0, 200, 255, 0.2);
-  color: #33d2ff;
-  border: 1px solid rgba(0, 200, 255, 0.5);
-}
-
-.tag.sale {
-  background: rgba(255, 150, 0, 0.2);
-  color: #ffb84d;
-  border: 1px solid rgba(255, 150, 0, 0.4);
-}
-
-/* FADE EFFECT WHEN FILTERING */
-.property-card {
-  transition: opacity 0.4s ease, transform 0.4s ease;
-}
-.property-card.hide {
-  opacity: 0;
-  transform: scale(0.9);
-  pointer-events: none;
-}
-/* CATEGORY FILTER */
-.property-filter {
-  margin-bottom: 30px;
-  text-align: center;
-}
-.filter-btn {
-  background: rgba(255,255,255,0.08);
-  color: gold;
-  border: 1px solid rgba(255,215,0,0.3);
-  border-radius: 10px;
-  padding: 10px 20px;
-  margin: 5px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-.filter-btn:hover { background: gold; color: #000; }
-.filter-btn.active {
-  background: gold;
-  color: #000;
-  transform: scale(1.05);
-}
-.tag {
-  display: inline-block;
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 8px;
-  margin-top: 5px;
-}
-.tag.rent {
-  background: rgba(0,200,255,0.15);
-  color: #33d2ff;
-  border: 1px solid rgba(0,200,255,0.4);
-}
-.tag.sale {
-  background: rgba(255,150,0,0.15);
-  color: #ffb84d;
-  border: 1px solid rgba(255,150,0,0.4);
-}
-.property-card {
-  transition: opacity 0.5s ease, transform 0.4s ease;
-}
-.property-card.hide {
-  opacity: 0;
-  transform: scale(0.95);
-  pointer-events: none;
-  position: absolute;
-  visibility: hidden;
-}
-
-
-/* FULLSCREEN SLIDER LIKE BAYUT */
-.fullscreen-slider {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.95);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 99999;
-  animation: fadeIn 0.4s ease;
-}
-
-.slider-header {
-  position: absolute;
-  top: 25px;
-  left: 25px;
-}
-
-.back-btn {
-  background: rgba(255,255,255,0.15);
-  color: #fff;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.back-btn:hover {
-  background: gold;
-  color: #000;
-}
-
-.slider-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 90%;
-  max-width: 900px;
-  position: relative;
-}
-
-.slide-photo {
-  max-width: 100%;
-  max-height: 80vh;
-  border-radius: 10px;
-  border: 2px solid rgba(255,215,0,0.3);
-  box-shadow: 0 0 25px rgba(255,215,0,0.2);
-  transition: opacity 0.3s ease;
-}
-
-.arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255,255,255,0.1);
-  color: gold;
-  border: 2px solid gold;
-  font-size: 2rem;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  cursor: pointer;
-  transition: 0.3s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.arrow:hover {
-  background: gold;
-  color: #000;
-}
-
-.arrow.left { left: -70px; }
-.arrow.right { right: -70px; }
-
-@media (max-width: 768px) {
-  .arrow.left { left: 10px; }
-  .arrow.right { right: 10px; }
-}
-
-/* ABOUT SECTION */
-.about-container {
-  max-width: 1100px;
-  margin: 60px auto;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 50px;
-  padding: 40px 30px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 215, 0, 0.15);
-  border-radius: 20px;
-  box-shadow: 0 0 40px rgba(255, 215, 0, 0.08);
-  backdrop-filter: blur(10px);
-  animation: fadeIn 1.2s ease;
-}
-
-.about-text {
-  flex: 1;
-  color: #e8e8e8;
-  font-size: 1rem;
-  line-height: 1.8;
-  letter-spacing: 0.2px;
-  text-align: justify;
-}
-
-.about-text h3 {
-  color: gold;
-  font-size: 1.8rem;
-  margin-bottom: 15px;
-  font-weight: 600;
-  text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
-}
-
-.about-text p {
-  margin-bottom: 18px;
-  color: #ddd;
-  text-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
-  transition: color 0.3s ease;
-}
-
-.about-text p:hover {
-  color: #fff;
-}
-
-.owner-photo {
-  width: 280px;
-  height: 280px;
-  border-radius: 50%;
-  border: 3px solid gold;
-  object-fit: cover;
-  box-shadow: 0 0 30px rgba(255, 215, 0, 0.35);
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
-}
-
-.owner-photo:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 45px rgba(255, 215, 0, 0.5);
-}
-
-.section.about {
-  background: linear-gradient(180deg, rgba(15,15,15,1) 0%, rgba(25,25,25,1) 100%);
-  padding: 100px 20px;
-}
-
-.section.about .section-title {
-  margin-bottom: 50px;
-  color: gold;
-  text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
-  letter-spacing: 1px;
-}
-
-/* Mobile-friendly adjustments */
-@media (max-width: 900px) {
-  .about-container {
-    flex-direction: column;
-    text-align: center;
-    padding: 30px 20px;
-  }
-  .about-text {
-    text-align: left;
-    font-size: 0.95rem;
-  }
-  .owner-photo {
-    width: 220px;
-    height: 220px;
-  }
-}
-
-/* Read More / Read Less Styles */
-.extra-text {
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition: max-height 0.8s ease, opacity 0.6s ease;
-}
-
-.extra-text.show {
-  max-height: 1000px; /* enough space for full text */
-  opacity: 1;
-}
-
-.read-btn {
-  background: gold;
-  color: #000;
-  border: none;
-  border-radius: 10px;
-  padding: 10px 25px;
-  font-weight: 600;
-  margin-top: 15px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.read-btn:hover {
-  background: #ffd966;
-  transform: scale(1.05);
-}
-
-
-
-
-/* 🌟 LARGE GOLDEN SOCIAL ICONS (easy to click) */
-.social-links {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 35px;               /* spacing between icons */
-  margin: 50px 0;
-}
-
-.social-icon {
-  width: 85px;             /* 👈 bigger circle size */
-  height: 85px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  border: 3px solid gold;
-  background: rgba(255, 255, 255, 0.06);
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.social-icon i {
-  font-size: 2.5rem;       /* 👈 bigger icon inside */
-  color: gold;
-  transition: all 0.3s ease;
-}
-
-.social-icon:hover {
-  transform: scale(1.15);
-  box-shadow: 0 0 35px rgba(255, 215, 0, 0.6);
-  background: rgba(255, 215, 0, 0.1);
-}
-
-.social-icon:hover i {
-  color: #fff;
-}
-
-/* Subtle pulsing glow for luxury look */
-@keyframes glowPulse {
-  0% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
-  50% { box-shadow: 0 0 35px rgba(255, 215, 0, 0.6); }
-  100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
-}
-.social-icon {
-  animation: glowPulse 3s infinite ease-in-out;
-}
+    if (extraText.classList.contains("show")) {
+      readMoreBtn.textContent = "Read Less";
+    } else {
+      readMoreBtn.textContent = "Read More";
+    }
+  });
+});
