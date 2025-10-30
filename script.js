@@ -89,6 +89,71 @@ function closeModal() {
   document.body.style.overflow = "auto";
 }
 
+
+
+/* -----------------------------
+   🖼 FULLSCREEN IMAGE SLIDER LIKE BAYUT
+----------------------------- */
+let currentIndex = 0;
+let currentImages = [];
+
+gallery.addEventListener("click", e => {
+  if (e.target.classList.contains("zoomable")) {
+    currentImages = Array.from(gallery.querySelectorAll(".zoomable")).map(img => img.src);
+    currentIndex = currentImages.indexOf(e.target.src);
+    openFullScreenSlider(currentIndex);
+  }
+});
+
+function openFullScreenSlider(index) {
+  const overlay = document.createElement("div");
+  overlay.className = "fullscreen-slider";
+  overlay.innerHTML = `
+    <div class="slider-header">
+      <button class="back-btn">⟨ Back to gallery</button>
+    </div>
+    <div class="slider-content">
+      <button class="arrow left">⟨</button>
+      <img src="${currentImages[index]}" class="slide-photo">
+      <button class="arrow right">⟩</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  document.body.style.overflow = "hidden";
+
+  // navigation
+  const img = overlay.querySelector(".slide-photo");
+  const left = overlay.querySelector(".arrow.left");
+  const right = overlay.querySelector(".arrow.right");
+  const back = overlay.querySelector(".back-btn");
+
+  const updateImage = () => { img.src = currentImages[currentIndex]; };
+
+  left.onclick = () => {
+    currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
+    updateImage();
+  };
+
+  right.onclick = () => {
+    currentIndex = (currentIndex + 1) % currentImages.length;
+    updateImage();
+  };
+
+  back.onclick = () => {
+    overlay.remove();
+    document.body.style.overflow = "auto";
+  };
+
+  overlay.addEventListener("click", e => {
+    if (e.target === overlay) {
+      overlay.remove();
+      document.body.style.overflow = "auto";
+    }
+  });
+}
+
+
+
 /* -----------------------------
    ❤️ SAVE / SHARE BUTTONS
 ----------------------------- */
@@ -276,5 +341,21 @@ filterButtons.forEach(button => {
         setTimeout(() => { card.style.display = "none"; }, 400);
       }
     });
+  });
+});
+
+// READ MORE / READ LESS FUNCTION
+document.addEventListener("DOMContentLoaded", function() {
+  const readMoreBtn = document.getElementById("readMoreBtn");
+  const extraText = document.querySelector(".extra-text");
+
+  readMoreBtn.addEventListener("click", function() {
+    extraText.classList.toggle("show");
+
+    if (extraText.classList.contains("show")) {
+      readMoreBtn.textContent = "Read Less";
+    } else {
+      readMoreBtn.textContent = "Read More";
+    }
   });
 });
